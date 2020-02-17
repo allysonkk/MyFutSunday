@@ -3,7 +3,7 @@
 Playing football with your friends on weekends is always hard to find the best balanced team.
 The App offers a simple CRUD where you can register the players, setup the skills and the logic will make the teams for a fair match.
 
-This project started at 16/02/2020.
+Started at 16/02/2020.
 
 ## Technologies/Versions
 - PHP 7.2
