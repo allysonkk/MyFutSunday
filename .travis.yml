@@ -1,0 +1,35 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t pedrocortez/futsunday -f ./Dockerfile .
+
+script:
+  - docker run -e CI=true pedrocortez/futsunday ./vendor/bin/phpunit
+  - docker run -e CI=true pedrocortez/futsunday php artisan migrate 
+
+  #Build images to production environment
+after_success:  
+  - docker build -t pedrocortez/futsunday .
+  - docker build -t pedrocortez/fut-nginx ./nginx
+ 
+  #login to DockerHub
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #push images to dockerHub
+  - docker push pedrocortez/futsunday
+  - docker push pedrocortez/fut-nginx
+
+#deploy:
+  #edge: true
+  #provider: elasticbeanstalk
+  #region: eu-west-2
+  #app: fib-calculator
+  #env: FibCalculator-env
+  #bucket_name: elasticbeanstalk-eu-west-2-676081676413
+  #bucket_path: docker-multi
+  #on:
+   # branch: master
+  #access_key_id: $AWS_ACCESS_KEY
+  #secret_access_key: $AWS_SECRET_KEY

@@ -1,0 +1,36 @@
+version: '2'
+services:
+    webserver:
+      image: nginx:alpine
+      volumes:
+        - .:/var/www
+        ## copy nginx configuration for our application ##
+        - ./nginx/conf.d/:/etc/nginx/conf.d/
+      ports:
+                ## run the webserver on port 8080 ##
+        - "8080:80"
+    app:
+            ## read php image from our custom docker image ##
+      build:
+        context: .
+        dockerfile: Dockerfile
+      volumes:
+      ## copy project files to /var/www ##
+       - .:/var/www
+      working_dir: /var/www
+    db:
+      image: mysql:5.7
+        ## expose the mysql port to our machine so we can access it from any mysql-client like TablePlus ##
+      ports:
+          - "3388:3306"
+       ## keep mysql data on localhost so we don't lose them ##
+      volumes:
+          - ./docker-volumes-data/db:/var/lib/database
+      environment:
+        MYSQL_DATABASE: laravel
+        MYSQL_ROOT_PASSWORD: root
+    redis:
+      image: redis
+      volumes:
+          ## keep redis data on localhost so we don't lose them ##
+        - ./docker-volumes-data/redis:/dat  
